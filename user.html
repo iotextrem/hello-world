@@ -1,0 +1,132 @@
+<!DOCTYPE html >
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Sudent</title>
+    <!-- Custom styles for this template -->
+    <link href="admin.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+        <!--MENÜ-->
+        <nav class="navbar navbar-light bg-light justify-content-between">
+            <span id="session" class="badge badge-pill badge-danger">STUDENT</span>
+            <button id="logoutButton" class="btn btn-outline-danger my-2 my-sm-0" type="submit">logout</button>
+            </button>
+        </nav>
+        <!--EXPLORER-->
+        <div class="explorer">
+            <div class="col-3">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span id="titel">
+                            <!--JQUERY-->
+                        </span>
+                        <span id="anz" class="badge badge-primary badge-pill">
+                            <!--JQUERY-->
+                        </span>
+                    </li>
+                </ul>
+                <br>
+                <ul id="menuLeft" class="list-group">
+                    <!--JQUERY-->
+                </ul>
+            </div>
+            <div id="colX" class="col-9">
+                <table id="tabelleStudentInfo" class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">TxID</th>
+                            <th scope="col">Punkte</th>
+                            <th scope="col">Confirm</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentInfo">
+                        <!--JQUERY-->
+                    </tbody>
+                </table>
+                <!--XXXXXXXX-->
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script type='text/javascript'>
+
+    $(document).ready(function () {
+        isSessionLogout("isSession");
+    });
+
+    // ######
+    // Menü #
+    // ######
+    function menu() {
+        $('#titel').text('Balance');
+        summ = 0;
+        // Linke Menü
+        $.each(user.value.params, function (index, value) {
+            $('#menuLeft').append(
+                '<li class="list-group-item d-flex justify-content-between align-items-center"><small>'
+                + index +
+                '</small><span class="badge badge-primary badge-pill" >'
+                + value +
+                '</span ></li>');
+        });
+        //Tabelle
+
+        $.each(user.value.data.balance, function (i1, v1) {
+            $('#studentInfo').append('<tr>');
+            $('#studentInfo').append('<td><small>' + i1 + '</small></td>');
+            $.each(v1, function (i2, v2) {
+                $('#studentInfo').append('<td><small>' + v2 + '</small></td>');
+                i2 == 'punkte' ? summ++ : null; // Punkte zählen
+            });
+            $('#studentInfo').append('</tr>'); // Punkte ausgeben
+        });
+        $('#anz').text(summ);
+    }
+
+
+    function isSessionLogout(func, info) {
+        $.post("../core/Server.php",
+            {
+                "function":
+                    {
+                        "name": func
+                    },
+                "params":
+                    {
+                        "": "",
+                    }
+            },
+            function (data, status) {
+                user = data.result;
+                console.log("response: " + user + "\nStatus: " + status);
+            }, "json").done(function () {
+                console.log(user.value);
+                if (user.info) {
+                    $('#session ').attr("class", "class=badge badge-pill badge-success"); // User grün
+                    menu();
+                }
+            });
+    }
+
+    //########
+    // Logout#
+    //########
+    $('#logoutButton').click(function () {
+        isSessionLogout("logout");
+        window.location.replace("/ba/gui/login.html");
+    });
+
+</script>
+
+</html>
